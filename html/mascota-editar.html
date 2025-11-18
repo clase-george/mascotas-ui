@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Editar mascota</title>
+    <!-- En el proyecto React ya cargaréis Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+<div class="min-h-screen flex flex-col">
+    <!-- CABECERA -->
+    <header class="border-b bg-white">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+            <div>
+                <h1 class="text-xl font-semibold text-slate-900">
+                    Gestión de mascotas
+                </h1>
+                <p class="text-sm text-slate-500">
+                    Aplicación para el control de perros y gatos
+                </p>
+            </div>
+        </div>
+    </header>
+
+    
+    <main class="flex-1">
+        <div class="max-w-6xl mx-auto px-4 py-6 grid gap-6 lg:grid-cols-[2fr,1fr]">
+          
+            <div class="md:col-span-2 flex items-center justify-between">
+              
+                <button
+                        type="button"
+                        class="inline-flex items-center text-xs font-medium text-slate-600 hover:text-slate-900"
+                >
+                    ← Volver al listado
+                </button>
+            </div>
+
+        
+            <section class=" hidden bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5">
+                <div
+                        id="error-message"
+                        class="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700"
+                >
+                    Mascota no encontrada
+                </div>
+            </section>
+
+            
+            <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5">
+                <div class="mb-4">
+                    <h2 class="text-base font-semibold text-slate-900">
+                        Datos de la mascota
+                    </h2>
+                </div>
+
+                <!--
+                  En React:
+                  - useEffect: cargar datos de la mascota (GET)
+                  - useState: controlar los campos del formulario
+                  - onSubmit: lanzar PUT con los datos actualizados
+                -->
+                <form
+                        id="mascota-form"
+                        class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                >
+                    
+                    <div class="flex flex-col gap-1">
+                        <label
+                                for="f-numero-chip"
+                                class="text-xs font-medium text-slate-600"
+                        >
+                            Nº de chip
+                        </label>
+                        <input
+                                id="f-numero-chip"
+                                name="numeroChip"
+                                type="text"
+                                value="CH123456"
+                                readonly
+                                class="rounded-lg border border-slate-300 bg-slate-100 px-3 py-1.5 text-sm text-slate-700"
+                        />
+                        <p class="text-[11px] text-slate-500">
+                            El número de chip es la clave de la mascota y no se puede cambiar.
+                        </p>
+                    </div>
+
+                 
+                    <div class="flex flex-col gap-1">
+                        <label
+                                for="f-nombre"
+                                class="text-xs font-medium text-slate-600"
+                        >
+                            Nombre
+                        </label>
+                        <input
+                                id="f-nombre"
+                                name="nombre"
+                                type="text"
+                                placeholder="Luna, Toby..."
+                                value="Luna"
+                                class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+       
+                    <div class="flex flex-col gap-1">
+                        <label
+                                for="f-tipo"
+                                class="text-xs font-medium text-slate-600"
+                        >
+                            Tipo
+                        </label>
+                        <select
+                                id="f-tipo"
+                                name="tipo"
+                                class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        >
+                            <option value="perro" selected>Perro</option>
+                            <option value="gato">Gato</option>
+                        </select>
+                    </div>
+
+              
+                    <div class="flex flex-col gap-1">
+                        <label
+                                for="f-raza"
+                                class="text-xs font-medium text-slate-600"
+                        >
+                            Raza
+                        </label>
+                        <input
+                                id="f-raza"
+                                name="raza"
+                                type="text"
+                                placeholder="Mestizo, Labrador..."
+                                value="Labrador"
+                                class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+                  
+                    <div class="flex flex-col gap-1">
+                        <label
+                                for="f-edad"
+                                class="text-xs font-medium text-slate-600"
+                        >
+                            Edad (años)
+                        </label>
+                        <input
+                                id="f-edad"
+                                name="edad"
+                                type="number"
+                                min="0"
+                                max="30"
+                                value="3"
+                                class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+               
+                    <div class="flex flex-col gap-1">
+                        <label
+                                for="f-peso"
+                                class="text-xs font-medium text-slate-600"
+                        >
+                            Peso (kg)
+                        </label>
+                        <input
+                                id="f-peso"
+                                name="pesoKg"
+                                type="number"
+                                min="0"
+                                step="0.1"
+                                value="18.5"
+                                class="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        />
+                    </div>
+
+                    
+                    <div class="md:col-span-2">
+                       
+                        <div
+                                id="form-error"
+                                class="mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700"
+                        >
+
+                            Error actualizando mascota
+                        </div>
+
+                        <div
+                                id="form-success"
+                                class="hidden mb-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700"
+                        >
+                
+                        </div>
+                    </div>
+
+                   
+                    <div
+                            id="error-message-form"
+                            class="hidden mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 md:col-span-2"
+                    >
+                        edad debe ser un número válido
+                    </div>
+
+                 
+                    <div class="md:col-span-2 flex items-center justify-between">
+                      
+
+                        <button
+                                type="submit"
+                                class="inline-flex items-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+                        >
+                            Guardar cambios
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            
+            <aside class="space-y-4">
+                <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                    <h2 class="text-sm font-semibold text-slate-900 mb-2">
+                        Endpoints utilizados
+                    </h2>
+                    <div class="space-y-2 text-xs text-slate-700">
+                        <div>
+                            <div class="font-medium text-slate-800">
+                                Cargar datos de la mascota
+                            </div>
+                            <code
+                                    class="mt-0.5 inline-block rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px]"
+                            >
+                                GET /api/mascotas/{numeroChip}
+                            </code>
+                        </div>
+                        <div>
+                            <div class="font-medium text-slate-800">
+                                Guardar cambios
+                            </div>
+                            <code
+                                    class="mt-0.5 inline-block rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px]"
+                            >
+                                PUT /api/mascotas/{numeroChip}
+                            </code>
+                        </div>
+                        <div class="mt-2">
+                            <div class="font-medium text-slate-800">
+                                Posibles errores
+                            </div>
+                            <ul class="mt-1 list-disc pl-4 text-[11px] text-slate-600">
+                                <li><code>404</code> → mascota no encontrada</li>
+                                <li><code>400</code> → datos no válidos</li>
+                                <li><code>500</code> → error actualizando mascota</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </main>
+</div>
+</body>
+</html>
