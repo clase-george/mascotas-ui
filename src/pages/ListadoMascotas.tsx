@@ -1,10 +1,11 @@
 import Header from "@/components/Header";
 import type { Mascota } from "@/types/mascotas";
+
 import { useEffect, useState } from "react";
 
 export default function ListadoMascotas(){
    const [mascotas, setMascotas] = useState<Mascota[]>([]);
-   
+   const [searchTerm,setSearchTerm] = useState<string>("")
    
   useEffect(() => {
     console.log('cargando mascotas...');
@@ -21,7 +22,22 @@ export default function ListadoMascotas(){
     });
     
   }, []);
+  const confirm = window.confirm;
 
+  const handleDelete = async(numeroChip: string) => {
+
+    await confirm("Estas seguro?");
+    
+    await fetch(`http://localhost:3000/api/mascotas/${numeroChip}`, {
+        method: "DELETE",
+    });
+    setMascotas(prev => prev.filter(mascota => mascota.numeroChip !== numeroChip))
+    alert("MAscota borrada");
+  }
+
+  const filteredMascotas  = mascotas.filter((mascota: Mascota) => 
+        mascota.tipo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   
     return (
         <>
@@ -40,7 +56,7 @@ export default function ListadoMascotas(){
                             className="inline-flex items-center rounded-full bg-emerald-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
                             type="button"
                     >
-                        Añadir nueva mascota
+                      <a href="/mascotas/crear/">Añadir nueva mascota</a>  
                     </button>
                 </div>
 
@@ -61,6 +77,8 @@ export default function ListadoMascotas(){
                                 className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
                                 id="f-tipo"
                                 name="tipo"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                                 
                                 
                         >
@@ -129,7 +147,7 @@ export default function ListadoMascotas(){
                 <div className="flex items-center justify-between mb-3 text-xs text-slate-600">
                   <span id="total-mascotas">
                     Total de mascotas encontradas:
-                    <span className=" font-semibold text-slate-900">2</span>
+                    <span className=" font-semibold text-slate-900">{filteredMascotas.length}</span>
                   </span>
                 </div>
 
@@ -158,7 +176,7 @@ export default function ListadoMascotas(){
                         </thead>
                         <tbody className="divide-y divide-slate-100" id="mascotas-tbody">
 
-                   {mascotas.map((m: Mascota) => (
+                   {filteredMascotas.map((m: Mascota) => (
     // Quitamos el <> de aquí
     <tr key={m.numeroChip} className="bg-white">
         <td className="px-3 py-2">
@@ -181,15 +199,19 @@ export default function ListadoMascotas(){
             {m.edad}
         </td>
         <td className="px-3 py-2 text-[13px] text-slate-700">
-            {m.pesoKg}
+            {m.pesoKg} kg
         </td>
         <td className="px-3 py-2">
             <div className="flex justify-between">
-                <button className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-medium text-white hover:bg-red-700">
+                <button 
+                onClick={()=> handleDelete(m.numeroChip)}
+                className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-[11px] font-medium text-white hover:bg-red-700">
                     Eliminar
                 </button>
-                <button className="inline-flex items-center rounded-full bg-blue-600 px-3 py-1 text-[11px] font-medium text-white hover:bg-blue-700">
-                    Editar
+                <button 
+                
+                className="inline-flex items-center rounded-full bg-blue-600 px-3 py-1 text-[11px] font-medium text-white hover:bg-blue-700">
+                    <a href={`/mascotas/editar/${m.numeroChip}`}>Editar</a> 
                 </button>
             </div>
         </td>
