@@ -5,11 +5,24 @@ import { useEffect, useState } from "react";
 
 export default function ListadoMascotas(){
    const [mascotas, setMascotas] = useState<Mascota[]>([]);
-   const [searchTerm,setSearchTerm] = useState<string>("")
+   const [searchTerm,setSearchTerm] = useState<string>("");
+  // const [edadMinMascota,setEdadMinMascota] = useState<number>(0);
+   //const [edadMaxMascota,setEdadMaxMascota] = useState<number>(0);
    
   useEffect(() => {
+    const obtenerMascotas = async (tipo?: string, edadMin?: number, edadMax?: number) => {
+        let url = `http://localhost:3000/api/mascotas?`
+        if(tipo){
+            url+=`tipo=${tipo}`
+        }
+        if(edadMin){
+            url+=`edadMin=${edadMin}`
+        }
+         if(edadMax){
+            url+=`edadMax=${edadMax}`
+        }
     console.log('cargando mascotas...');
-    fetch("http://localhost:3000/api/mascotas",{  //peticion a la api
+    fetch(`${url}`,{  //peticion a la api
       method: "GET",
     })
     .then(response => response.json())
@@ -20,8 +33,10 @@ export default function ListadoMascotas(){
     .catch((error) => {
       console.error('Error fetching mascotas:', error);
     });
-    
+};
+obtenerMascotas();
   }, []);
+
   const confirm = window.confirm;
 
   const handleDelete = async(numeroChip: string) => {
@@ -38,6 +53,8 @@ export default function ListadoMascotas(){
   const filteredMascotas  = mascotas.filter((mascota: Mascota) => 
         mascota.tipo.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  
   
     return (
         <>
@@ -176,7 +193,7 @@ export default function ListadoMascotas(){
                         </thead>
                         <tbody className="divide-y divide-slate-100" id="mascotas-tbody">
 
-                   {filteredMascotas.map((m: Mascota) => (
+                   {mascotas.map((m: Mascota) => (
     // Quitamos el <> de aquí
     <tr key={m.numeroChip} className="bg-white">
         <td className="px-3 py-2">
@@ -188,7 +205,11 @@ export default function ListadoMascotas(){
             <div className="text-[13px] text-slate-900">{m.nombre}</div>
         </td>
         <td className="px-3 py-2">
-            <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+            <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium  ${
+                m.tipo && m.tipo.includes("gato") ? "bg-emerald-50  text-emerald-700" :
+                m.tipo && m.tipo.includes("perro") ? 'bg-red-50 text-red-700':
+                ' bg-blue-50 text-blue-700'
+            }`}>
                 {m.tipo}
             </span>
         </td>

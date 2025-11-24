@@ -178,7 +178,7 @@ export const actualizarMascota = async (req, res) => {
     let edadNum = mascota.edad;
     if (edad !== undefined) {
       edadNum = Number(edad);
-      if (Number.isNaN(edadNum)) {
+      if (Number.isNaN(edadNum) ) {
         return res
             .status(400)
             .json({ error: "edad debe ser un número válido" });

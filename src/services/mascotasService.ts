@@ -30,3 +30,4 @@ export async function eliminarMascota (chip:string):Promise<APIResult<Mascota>>{
     const error:APIError = await response.json();
     return {ok:false, error: error};
 }
+

@@ -1,5 +1,6 @@
 import type { Mascota } from "@/types/mascotas";
-import { useEffect, useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function MascotasEditar() {
@@ -20,31 +21,67 @@ export default function MascotasEditar() {
   })
 
   const {numeroChip} = useParams();
+  const [errorPost,setErrorPost] = useState<boolean>(false);
+  const [errorFetch,setErrorFetch] = useState<boolean>(false);
+  const [mensajeError,setMensajeError] = useState<string>("");
+  const[mensajeErrorPost,setMensajeErrorPost] = useState<string>("");
 
   useEffect(() => {
     console.log('cargando mascotas para editar...');
+    setErrorFetch(false)
     fetch(`http://localhost:3000/api/mascotas/${numeroChip}`,{  //peticion a la api
       method: "GET",
     })
-    .then(response => response.json())
+    .then(response =>{ 
+        if(!response.ok){
+           return response.json().then(errorData => {
+                const mensaje = errorData.error || errorData.message || "Error desconocido del servidor";
+            throw new Error(mensaje);
+           })
+        }
+        return response.json()})
     .then((res) => {
       setForm(res);
     }).catch((error) => {
-      console.error('Error fetching festival:', error);
+      console.error('Error fetching mascotas:', error);
+      setMensajeError(error.message)
+      console.log(error.message)
+     setErrorFetch(true)
     });
-  }, []);
+  }, [numeroChip]);
+
+
+ 
 
   const handlEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch(`http://localhost:3000/api/mascotas/${numeroChip}`,{
+    setErrorPost(false);
+    try{
+        const response = await fetch(`http://localhost:3000/api/mascotas/${numeroChip}`,{
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(form),
     });
+    if(!response.ok){
+        const errorData = await response.json();
+        throw new Error(errorData.error)
+    }
     alert(`Mascotas ${form.numeroChip} ha sido editado`)
+    window.location.href = '/';
+    }
+    catch(error){
+        console.error(error)
+        setErrorPost(true)
+        setMensajeErrorPost(error.message)
+    }
   };
+
+ 
+  const handleTipoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setForm(prev => ({ ...prev, tipo: e.target.value , raza:""}));
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { //por cada vez que se produzva uno de los eventos, se lanza lo de abajo
     const { name, value } = e.target; //basicamente guardamos en name y value el valor del objeto cuando se produce el evento
@@ -66,14 +103,7 @@ export default function MascotasEditar() {
             </div>
 
         
-            <section className=" hidden bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5">
-                <div
-                        id="error-message"
-                        className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700"
-                >
-                    Mascota no encontrada
-                </div>
-            </section>
+            
 
             
             <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5">
@@ -83,8 +113,16 @@ export default function MascotasEditar() {
                     </h2>
                 </div>
 
-                
-                <form
+                {errorFetch ? 
+                (<section className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5">
+                <div
+                        id="error-message"
+                        className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700"
+                >
+                    <strong>Error de carga: </strong> {mensajeError}
+                </div>
+            </section>):(
+               <form
                         id="mascota-form"
                         className="grid grid-cols-1 md:grid-cols-2 gap-4"
                 >
@@ -102,6 +140,7 @@ export default function MascotasEditar() {
                                 type="text"
                                 value={form.numeroChip}
                                 onChange={handleChange}
+                                disabled
                               
                                 className="rounded-lg border border-slate-300 bg-slate-100 px-3 py-1.5 text-sm text-slate-700"
                         />
@@ -141,11 +180,11 @@ export default function MascotasEditar() {
                                 id="f-tipo"
                                 name="tipo"
                                 value={form.tipo}
-                                onChange={handleChange}
-                                className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                                onChange={handleTipoChange}
+                                className={`rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring focus:ring-blue-200`}
                         >
-                            <option>Perro</option>
-                            <option>Gato</option>
+                            <option>perro</option>
+                            <option>gato</option>
                         </select>
                     </div>
 
@@ -209,14 +248,15 @@ export default function MascotasEditar() {
                     </div>
 
                     
-                    <div className="md:col-span-2">
+                    {errorPost ? (
+                        <div className="md:col-span-2">
                        
                         <div
                                 id="form-error"
                                 className="mb-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700"
                         >
 
-                            Error actualizando mascota
+                            {mensajeErrorPost}
                         </div>
 
                         <div
@@ -226,6 +266,9 @@ export default function MascotasEditar() {
                 
                         </div>
                     </div>
+                    ):(
+                       <div></div> 
+                    )}
 
                    
                     <div
@@ -244,10 +287,13 @@ export default function MascotasEditar() {
                                 onClick={handlEdit}
                                 className="inline-flex items-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
                         >
-                            Guardar cambios
+                            <a href="/">Guardar cambios</a>
                         </button>
                     </div>
                 </form>
+            )
+            }
+                
             </section>
 
             
